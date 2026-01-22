@@ -263,25 +263,25 @@ class scoreboard;
 
 
 
-      // CASE 1: WRITE OPERATION (op == 0)
+      // wr
       if (trref.op == 1'b0) begin
         // Update Shadow Memory
         sc_mem[trref.addr] = trref.din;
         $display("[SCO] : DATA WRITE UPDATE | Addr: %0d | Data: %0d", trref.addr, trref.din);
         
-        // Optional: Check if the Write failed (ack_err)
+        
         if (tr.ack_err) 
           $display("[SCO] : ERROR! Write Acknowledge Error Received");
         else
           $display("[SCO] : Write Successful");
       end
       
-      // CASE 2: READ OPERATION (op == 1)
+      // rd
       else begin
-        // Fetch what we expect from our Shadow Memory
+        
         expected_data = sc_mem[trref.addr];
         
-        // Compare Expected (Shadow Mem) vs Actual (Monitor/DUT)
+        
         if (tr.dout == expected_data) begin
           $display("[SCO] : DATA MATCHED   | Addr: %0d | Expected: %0d | Actual: %0d", trref.addr, expected_data, tr.dout);
         end
