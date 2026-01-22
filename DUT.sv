@@ -37,7 +37,7 @@ reg i2c_clk = 0;
 reg [1:0] pulse = 0;
   
   
-  always@(posedge clk or posedge rst) // <--- ADD 'or posedge rst'
+ always@(posedge clk or posedge rst) // to fix vivado bug 
     begin
       if(rst)
         begin
@@ -193,11 +193,11 @@ always@(posedge clk or posedge rst)
                    
           ack_1 : 
             begin
-              sda_en <= 1'b0; ///recv ack from slave
+              sda_en <= 1'b0; 
               case(pulse)
                 0: begin scl_t <= 1'b0; sda_t <= 1'b0; end
                 1: begin scl_t <= 1'b0; sda_t <= 1'b0; end
-                2: begin scl_t <= 1'b1; sda_t <= 1'b0; r_ack <= sda; end //r_ack determined by slave
+                2: begin scl_t <= 1'b1; sda_t <= 1'b0; r_ack <= sda; end 
                 3: begin scl_t <= 1'b1;  end
               endcase
                    
@@ -207,20 +207,20 @@ always@(posedge clk or posedge rst)
                     begin
                       state <= write_data;
                       sda_t <= 1'b0;
-                      sda_en <= 1'b1; /////write data to slave
+                      sda_en <= 1'b1; 
                       bitcount <= 0;                  
                     end
                   else if (r_ack == 1'b0 && data_addr[0] == 1'b1)
                     begin
                       state <= read_data;
                       sda_t <= 1'b1;
-                      sda_en <= 1'b0; ///read data from slave
+                      sda_en <= 1'b0; /
                       bitcount <= 0;
                      end
                    else
                      begin
                        state <= stop;
-                       sda_en <= 1'b1; ////send stop to slave
+                       sda_en <= 1'b1; 
                        ack_err <= 1'b1;
                      end
                    end
@@ -236,7 +236,7 @@ always@(posedge clk or posedge rst)
           
           write_data: 
             begin
-            ///write data to slave
+           
               if(bitcount <= 7)
                 begin
                   case(pulse)
@@ -261,7 +261,7 @@ always@(posedge clk or posedge rst)
                    begin
                      state <= ack_2;
                      bitcount <= 0;
-                     sda_en <= 1'b0; ///read from slave
+                     sda_en <= 1'b0; 
                    end
                  
                  
@@ -271,7 +271,7 @@ always@(posedge clk or posedge rst)
                  
           read_data: 
             begin
-              sda_en <= 1'b0; ///read from slave
+              sda_en <= 1'b0; 
               if(bitcount <= 7)
                 begin
                   case(pulse)
@@ -296,7 +296,7 @@ always@(posedge clk or posedge rst)
                    begin
                      state <= master_ack;
                      bitcount <= 0;
-                     sda_en <= 1'b1; ///master will send ack to slave
+                     sda_en <= 1'b1; //master will send ack to slave
                    end
                  
                  end
@@ -318,7 +318,7 @@ always@(posedge clk or posedge rst)
               begin
                 sda_t <= 1'b0;
                 state <= stop;
-                sda_en <= 1'b1; ///send stop to slave
+                sda_en <= 1'b1; 
                                       
                end
              else
@@ -332,18 +332,18 @@ always@(posedge clk or posedge rst)
                  
           ack_2 : 
             begin
-              sda_en <= 1'b0; ///recv ack from slave
+              sda_en <= 1'b0; 
                 case(pulse)
                   0: begin scl_t <= 1'b0; sda_t <= 1'b0; end
                   1: begin scl_t <= 1'b0; sda_t <= 1'b0; end
-                  2: begin scl_t <= 1'b1; sda_t <= 1'b0; r_ack <= sda; end ///recv ack from slave
+                  2: begin scl_t <= 1'b1; sda_t <= 1'b0; r_ack <= sda; end 
                   3: begin scl_t <= 1'b1;  end
                  endcase
                    
                  if(count1  == clk_count1*4 - 1)
                    begin
                      sda_t <= 1'b0;
-                     sda_en <= 1'b1; ///send stop to slave
+                     sda_en <= 1'b1; 
                      if(r_ack == 1'b0 )
                        begin
                          state <= stop;
@@ -366,7 +366,7 @@ always@(posedge clk or posedge rst)
           
           stop: 
             begin
-              sda_en <= 1'b1; ///send stop to slave
+              sda_en <= 1'b1;
               case(pulse)
                 0: begin scl_t <= 1'b1; sda_t <= 1'b0; end
                 1: begin scl_t <= 1'b1; sda_t <= 1'b0; end
@@ -379,7 +379,7 @@ always@(posedge clk or posedge rst)
                   state <= idle;
                   scl_t <= 1'b0;
                   busy <= 1'b0;
-                  sda_en <= 1'b1; ///send start to slave
+                  sda_en <= 1'b1; 
                   done   <= 1'b1;
                 end
                else
@@ -434,7 +434,7 @@ reg [3:0] bitcnt = 0;
  
  
  
-///////////// initialize mem
+///////////// initialize mem //////////////////////
 always@(posedge clk or posedge rst)
 begin
   if(rst)
@@ -458,7 +458,7 @@ begin
    
 end
  
-/////////////////////////pulse_gen logic
+/////////////////////////pulse gen logic////////////////////////////
   
 parameter sys_freq = 40000000;
 parameter i2c_freq = 100000;
@@ -582,7 +582,7 @@ always@(posedge clk)
        
        read_addr: 
          begin
-           sda_en <= 1'b0;  ///read addr to slave
+           sda_en <= 1'b0;  
            if(bitcnt <= 7)
              begin
                case(pulse)
@@ -655,7 +655,7 @@ always@(posedge clk)
                       
        read_data: 
          begin
-           sda_en <= 1'b0;  ///read addr to slave
+           sda_en <= 1'b0;  
            if(bitcnt <= 7)
              begin
                case(pulse)
@@ -718,7 +718,7 @@ always@(posedge clk)
        
        send_data : 
          begin
-           sda_en <= 1'b1;  ///read addr to slave
+           sda_en <= 1'b1;  
            if(bitcnt <= 7)
              begin
                r_mem  <= 1'b0;
